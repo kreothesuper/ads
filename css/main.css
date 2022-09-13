@@ -2037,6 +2037,14 @@ body {
   min-height: 665px;
 }
 
+.search__box-content {
+  display: none;
+}
+
+.search__box-content.active {
+  display: block;
+}
+
 .search__title {
   text-align: center;
   margin: 0 auto;
@@ -2131,14 +2139,6 @@ body {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-}
-
-.search-result-desktop, .search-result-mobile {
-  display: none;
-}
-
-.search-result-desktop.active, .search-result-mobile.active {
-  display: block;
 }
 
 .search-result__block + .search-result__block {

@@ -210,23 +210,27 @@ const searchResultInit = (data) => {
 
     clearSearch();
 
+    const searchResult = document.querySelector('.search__box'),
+        searchBoxContent = searchResult.querySelector('.search__box-content');
+
     if (window.innerWidth > 1200) {
         const searchBlock = document.querySelector('.search-result-desktop'),
             searchBlockContent = searchBlock.querySelector('.search-result-content');
 
-        searchBlock.classList.add('active');
         createSearchResult(searchBlockContent, data);
     } else {
         const searchBlock = document.querySelector('.search-result-mobile'),
             searchBlockContent = searchBlock.querySelector('.swiper-wrapper');
 
-        searchBlock.classList.add('active');
         createSearchResult(searchBlockContent, data, 'mobile')
     }
+
+    searchBoxContent.classList.add('active');
 }
 
 const apiRequest = (keywordSearch) => {
 
+    clearSearch();
     const searchResult = document.querySelector('.search__box'),
         searchStatus = searchResult.querySelector('.search__status'),
         searchSpinner = createSpinner(),
@@ -238,13 +242,19 @@ const apiRequest = (keywordSearch) => {
         api_options = {
             method: "POST",
             mode: 'cors',
-            referrerPolicy:'no-referrer',
+            referrerPolicy: 'no-referrer',
             body: JSON.stringify({keyword: keywordSearch}),
             headers: {"Content-type": "application/json; charset=UTF-8"}
         }
 
     fetch(api_url, api_options)
-        .then(data => data.json())
+        .then(data => {
+            if (!data.ok) {
+                clearSearch();
+                searchStatus.append(searchError);
+            }
+            return data.json()
+        })
         .then((json) => {
             clearSearch();
             searchResultInit(json, searchStatus)
@@ -255,15 +265,18 @@ const apiRequest = (keywordSearch) => {
         });
 };
 
-const clearSearch = () =>{
-  const searchResult = document.querySelector('.search__box'),
-      searchStatus = searchResult.querySelector('.search__status'),
-      searchBlockMobile = searchResult.querySelector('.search-result-mobile .swiper-wrapper'),
-      searchBlockDesktop = document.querySelector('.search-result-desktop .search-result-content');
+const clearSearch = () => {
 
-  removeChilds(searchStatus);
-  removeChilds(searchBlockDesktop);
-  removeChilds(searchBlockMobile);
+    const searchResult = document.querySelector('.search__box'),
+        searchBoxContent = searchResult.querySelector('.search__box-content'),
+        searchStatus = searchResult.querySelector('.search__status'),
+        searchBlockMobile = searchResult.querySelector('.search-result-mobile .swiper-wrapper'),
+        searchBlockDesktop = document.querySelector('.search-result-desktop .search-result-content');
+
+    searchBoxContent.classList.remove('active');
+    removeChilds(searchStatus);
+    removeChilds(searchBlockDesktop);
+    removeChilds(searchBlockMobile);
 };
 
 const createSpinner = () => {
